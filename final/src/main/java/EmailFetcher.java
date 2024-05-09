@@ -1,21 +1,56 @@
 import javax.mail.*;
 import javax.mail.internet.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 public class EmailFetcher {
     private String host;
     private String storeType;
     private String username;
     private String password;
+    private EmailClassifier classifier;
 
-    public EmailFetcher(String host, String storeType, String username, String password) {
+    public EmailFetcher(String host, String storeType, String username, String password)throws Exception { 
         this.host = host;
         this.storeType = storeType;
         this.username = username;
         this.password = password;
+        this.classifier = new EmailClassifier();
     }
+    
+    private String getTextFromMessage(Message message) throws MessagingException, IOException {
+        if (message.isMimeType("text/plain")) {
+            return message.getContent().toString();
+        } else if (message.isMimeType("text/html")) {
+            String html = (String) message.getContent();
+            return Jsoup.parse(html).text();  // Converts HTML to plain text
+        } else if (message.isMimeType("multipart/*")) {
+            Multipart multipart = (Multipart) message.getContent();
+            String plainText = null;
+            String htmlText = null;
+            for (int i = 0; i < multipart.getCount(); i++) {
+                BodyPart bodyPart = multipart.getBodyPart(i);
+                if (bodyPart.isMimeType("text/plain")) {
+                    plainText = bodyPart.getContent().toString();
+                } else if (bodyPart.isMimeType("text/html")) {
+                    String html = (String) bodyPart.getContent();
+                    htmlText = Jsoup.parse(html).text();  // Converts HTML to plain text
+                }
+            }
+            // Prefer plain text over HTML if both are present
+            return plainText != null ? plainText : htmlText;
+        }
+        return "";
+    }
+    
 
-    public void checkEmails() {
+    public void checkEmails()throws Exception {
         try {
             Properties properties = new Properties();
             properties.put("mail.pop3.host", host); // Host should be "pop.gmail.com" for Gmail
@@ -38,10 +73,14 @@ public class EmailFetcher {
 
             for (int i = 0, n = messages.length; i < n; i++) {
                 Message message = messages[i];
+                String contentString = getTextFromMessage(message);
+                String isSpam = classifier.predict(contentString);
                 System.out.println("---------------------------------");
                 System.out.println("Email Number " + (i + 1));
                 System.out.println("Subject: " + message.getSubject());
                 System.out.println("From: " + message.getFrom()[0]);
+                System.out.println("content: " + contentString);
+                System.out.println("Is Spam: " + isSpam);
             }
 
             emailFolder.close(false);

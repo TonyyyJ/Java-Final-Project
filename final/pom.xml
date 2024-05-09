@@ -26,5 +26,17 @@
         </dependency>
 
         <!-- Add any additional dependencies here -->
+        <dependency>
+            <groupId>nz.ac.waikato.cms.weka</groupId>
+            <artifactId>weka-stable</artifactId>
+            <version>3.8.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+        <version>1.13.1</version>
+</dependency>
+
     </dependencies>
 </project>

@@ -28,11 +28,15 @@ public class SpamCheckerGUI extends JFrame {
         checkButton = new JButton("Check Emails");
         checkButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String host = hostField.getText();
-                String username = usernameField.getText();
-                String password = passwordField.getText();
-                EmailFetcher fetcher = new EmailFetcher(host, "pop3s", username, password);
-                fetcher.checkEmails();
+                try {
+                    String host = hostField.getText();
+                    String username = usernameField.getText();
+                    String password = passwordField.getText();
+                    EmailFetcher fetcher = new EmailFetcher(host, "pop3s", username, password);
+                    fetcher.checkEmails();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
         add(checkButton);
@@ -42,5 +46,6 @@ public class SpamCheckerGUI extends JFrame {
 
     public static void main(String[] args) {
         new SpamCheckerGUI();
+        System.out.println("Current directory: " + System.getProperty("user.dir"));
     }
 }
