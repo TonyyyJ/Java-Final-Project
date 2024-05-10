@@ -75,7 +75,7 @@ public class EmailFetcher {
             emailFolder.open(Folder.READ_ONLY);
 
             Message[] messages = emailFolder.getMessages();
-
+            System.out.println("Total Message: " + messages.length);
 
             for (int i = 0, n = messages.length; i < n; i++) {
                 Message message = messages[i];
