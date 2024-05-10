@@ -74,6 +74,7 @@ ham	HI BABE IM AT HOME NOW WANNA DO SOMETHING? XX
 ham	K..k:)where are you?how did you performed?
 ham	U can call me now...
 ham	I am waiting machan. Call me once you free.
+spam	Hi Friend! Want to discover the secrets to making money online? Join our FREE webinar where our experts will reveal proven strategies that can help you generate a steady income from the comfort of your home. Spaces are limited, so register now to secure your spot: www.moneygoestome.com See you there! Money Online Income Solutions
 ham	Thats cool. i am a gentleman and will treat you with dignity and respect.
 ham	I like you peoples very much:) but am very shy pa.
 ham	Does not operate after  &lt;#&gt;  or what
@@ -82,6 +83,7 @@ ham	Sorry, I'll call later
 ham	K. Did you call me just now ah? 
 ham	Ok i am on the way to home hi hi
 ham	You will be in the place of that man
+spam	Hello there, You've seen how fast celebrities lose weight and now we're offering you the same secret formula! Our new diet pills can help you shed pounds without any exercise or dieting. Exclusive offer: Buy one get one free for the next 48 hours! Don't wait, click here www.fakeDrug.com to get your hands on this limited-time offer and start losing weight like a star! Best regards, Weight Health Solutions
 ham	Yup next stop.
 ham	I call you later, don't have network. If urgnt, sms me.
 ham	For real when u getting on yo? I only need 2 more tickets and one more jacket and I'm done. I already used all my multis.

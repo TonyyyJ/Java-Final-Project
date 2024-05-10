@@ -1,27 +1,33 @@
-import javax.mail.*;
-import javax.mail.internet.*;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Properties;
+
+import javax.mail.BodyPart;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.NoSuchProviderException;
+import javax.mail.Session;
+import javax.mail.Store;
+
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+
 
 public class EmailFetcher {
     private String host;
     private String storeType;
     private String username;
     private String password;
-    private EmailClassifier classifier;
+    private EmailClassifier model;
+    private DatabaseManager dbManager;
 
     public EmailFetcher(String host, String storeType, String username, String password)throws Exception { 
         this.host = host;
         this.storeType = storeType;
         this.username = username;
         this.password = password;
-        this.classifier = new EmailClassifier();
+        this.model = new EmailClassifier();
+        this.dbManager = new DatabaseManager();
     }
     
     private String getTextFromMessage(Message message) throws MessagingException, IOException {
@@ -74,7 +80,15 @@ public class EmailFetcher {
             for (int i = 0, n = messages.length; i < n; i++) {
                 Message message = messages[i];
                 String contentString = getTextFromMessage(message);
-                String isSpam = classifier.predict(contentString);
+                boolean isSpam = model.isSpam(contentString);
+                String result;
+                if (!isSpam) {
+                    result = "not_spam";
+                }else{
+                    result = "spam";
+                }
+                dbManager.insertEmail(message.getSubject(), message.getFrom()[0].toString(), contentString, result);
+
                 System.out.println("---------------------------------");
                 System.out.println("Email Number " + (i + 1));
                 System.out.println("Subject: " + message.getSubject());
@@ -93,4 +107,3 @@ public class EmailFetcher {
         }
     }
 }
-
