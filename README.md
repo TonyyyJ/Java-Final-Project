@@ -56,7 +56,26 @@ We use our test email account.
 Find the SpamCheckerGUI.java in the scr/main/java folder.
 
 Right click on this file, and select Run As > Java Application.
+
+
 ![image](https://github.com/TonyyyJ/Java-Final-Project/assets/112592243/a29033aa-8abe-40fd-a312-d3a1d38acac3)
 
+We are using 163 email as a test incicator of this project. 163 Mailbox is a free e-mail service provided by NetEase, mainly for the Chinese market. 
 
-It will take 10 to 30 to run the application, 
+We chose 163 email because its POP3 service is easy to access. 
+
+For Host, please the POP3 server:pop.163.com.
+
+For Username, please use:yydeng_0490@163.com, it's the eamil we used for this project.
+
+For password, please use the the third-party authorization password we got from the server:HIOQBGFNUIXFKZBZ.
+
+
+
+![image](https://github.com/TonyyyJ/Java-Final-Project/assets/112592243/61238a14-b4aa-4cee-a567-592bae65d604)
+
+
+After we click Check Emails, we will be connected to database by our DatbaseManager.java. The terminal will shows the connection to SQLite is success.
+
+The terminal will also show the progress of email, how many percentage of emails have been processed, and the time used to process all the emails.
+
