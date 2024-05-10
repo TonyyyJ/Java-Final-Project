@@ -22,6 +22,39 @@ SQLIite: For database operations.
 Java Swing: For the graphical user interface.
 
 # How to Run
-If running in eclipse, find the SpamCheckerGUI.java.
+First, download our zip and unzip it into a desired location on your computer.
+# 1.Open Eclipse
+
+# 2. Import the Project: 
+
+Go to the menu and select File > Import....
+
+In the import wizard, expand the Maven folder, and select Existing Maven Projects. Then click Next.
+
+Click Browse and navigate to the root directory where you extracted your project files. 
+
+ # 3. Configure the Project
+Eclipse may automatically start downloading the necessary dependencies as specified in the pom.xml。
+
+If not, Right-click on the project in the Project Explorer.
+
+Select Maven > Update Project... from the context menu.
+
+In the update project dialog box, check your project and click OK.
+
+# 4. Change Database Path in code.
+Locate your unzip file and find the target file, EmailChecker.db and copy the path of that.
+
+Find the DatabaseManager.java in the scr/main/java folder. In line 12, paste the path you just copied into the highlighted space. 
+![image](https://github.com/TonyyyJ/Java-Final-Project/assets/77677230/58a66c89-0703-4923-904a-f406806d77c3)
+
+(Note: The path should be ended with \\\EmailChecker.db". If you copy the file path from you file explorer, add \\\EmailChecker.db at the end of your path)
+
+# 4. Runnign the Project
+We use our test email account.
+   
+Find the SpamCheckerGUI.java in the scr/main/java folder.
 
 Right click on this file, and select Run As > Java Application.
+
+It will take 10 to 30 to run the application, 
