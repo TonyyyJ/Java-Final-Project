@@ -34,6 +34,9 @@ public class SpamCheckerGUI extends JFrame {
                     String password = passwordField.getText();
                     EmailFetcher fetcher = new EmailFetcher(host, "pop3s", username, password);
                     fetcher.checkEmails();
+
+                    EmailUI emailUI = new EmailUI();
+                    emailUI.setVisible(true);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

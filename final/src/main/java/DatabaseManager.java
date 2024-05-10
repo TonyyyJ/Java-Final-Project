@@ -1,8 +1,11 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager {
     // Please modify this path to your local path where the EmailChecker.db from our zip submission is 
@@ -73,6 +76,42 @@ public class DatabaseManager {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static List<Email> fetchEmails() {
+        List<Email> emails = new ArrayList<>();
+        String sql = "SELECT * FROM email";
+        try (Connection conn = connect();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                emails.add(new Email(rs.getInt("id"), rs.getString("subject"), rs.getString("sender"), rs.getString("content"), rs.getString("is_spam")));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return emails;
+    }
+
+    public static List<Email> fetchEmailsBySpamStatus(String isSpam) {
+        List<Email> emails = new ArrayList<>();
+        String sql = "SELECT * FROM email WHERE is_spam = ?";
+        try (Connection conn = DriverManager.getConnection(URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, isSpam);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                emails.add(new Email(
+                    rs.getInt("id"),
+                    rs.getString("subject"),
+                    rs.getString("sender"),
+                    rs.getString("content"),
+                    rs.getString("is_spam")));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return emails;
     }
 
     // Main method to create table and insert example data
