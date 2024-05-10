@@ -51,6 +51,5 @@ public class SpamCheckerGUI extends JFrame {
         // delete the previous database table and recreate table for current complie
         DatabaseManager.recreateTable(); 
         new SpamCheckerGUI();
-        System.out.println("Current directory: " + System.getProperty("user.dir"));
     }
 }

@@ -16,7 +16,7 @@ public class EmailUI extends JFrame {
     
 
     public EmailUI() {
-        setTitle("Email Statistics");
+        setTitle("Email");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -60,16 +60,27 @@ public class EmailUI extends JFrame {
         }
 
         int total = spamCount + nonSpamCount;
-        dataset.setValue("Spam Emails", spamCount);
-        dataset.setValue("Not Spam Emails", nonSpamCount);
+        double spamPercentage = 0.0;
+        double nonSpamPercentage = 0.0;
+        if (total > 0) {
+            spamPercentage = (double) spamCount / total * 100;
+            nonSpamPercentage = (double) nonSpamCount / total * 100;
+        }
+
+        dataset.setValue("Spam (" + String.format("%.2f%%", spamPercentage) + ")", spamCount);
+        dataset.setValue("Not Spam (" + String.format("%.2f%%", nonSpamPercentage) + ")", nonSpamCount);
 
         JFreeChart chart = ChartFactory.createPieChart(
                 "Email Classification", dataset, true, true, false);
         ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(400, 300)); 
         getContentPane().add(chartPanel, BorderLayout.CENTER);
 
+        Font labelFont = new Font("Arial", Font.BOLD, 16);
         spamInfoLabel.setText(spamCount + " spam emails out of " + total + " total emails.");
         nonSpamInfoLabel.setText(nonSpamCount + " not_spam emails out of " + total + " total emails.");
+        spamInfoLabel.setFont(labelFont);
+        nonSpamInfoLabel.setFont(labelFont);
 
         pack(); // Resize frame to fit components
     }
@@ -81,18 +92,31 @@ public class EmailUI extends JFrame {
 
         List<Email> emails = DatabaseManager.fetchEmailsBySpamStatus(isSpam); // Implement this method in DatabaseManager
         DefaultListModel<String> model = new DefaultListModel<>();
+        
+        // //header
+        model.addElement("Email Subject:");
+        model.addElement("------------------------");
+
+        int index = 1;
         for (Email email : emails) {
-            model.addElement(email.getSubject());
+            model.addElement(index + ". " + email.getSubject());
+            index++;
         }
 
         JList<String> emailList = new JList<>(model);
         emailList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) { // Double-click to see details
-                    String selectedSubject = emailList.getSelectedValue();
-                    displayEmailContent(selectedSubject); // Implement this method to show content and sender
+                    int selectedIndex = emailList.locationToIndex(e.getPoint());
+                    if (selectedIndex > 1) { // Ensure clicks are not on the header or underline
+                        String selectedText = model.getElementAt(selectedIndex);
+                        String selectedSubject = selectedText.substring(selectedText.indexOf('.') + 2); // Skip index and period
+                        displayEmailContent(selectedSubject);
+                    }
+            
                 }
             }
+        
         });
 
         detailsFrame.add(new JScrollPane(emailList), BorderLayout.CENTER);
@@ -119,10 +143,10 @@ public class EmailUI extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            EmailUI frame = new EmailUI();
-            frame.setVisible(true);
-        });
-    }
+    // public static void main(String[] args) {
+    //     SwingUtilities.invokeLater(() -> {
+    //         EmailUI frame = new EmailUI();
+    //         frame.setVisible(true);
+    //     });
+    // }
 }

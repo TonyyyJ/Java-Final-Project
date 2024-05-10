@@ -75,7 +75,7 @@ public class EmailFetcher {
             emailFolder.open(Folder.READ_ONLY);
 
             Message[] messages = emailFolder.getMessages();
-            System.out.println("Total Message: " + messages.length);
+
 
             for (int i = 0, n = messages.length; i < n; i++) {
                 Message message = messages[i];
@@ -89,12 +89,13 @@ public class EmailFetcher {
                 }
                 dbManager.insertEmail(message.getSubject(), message.getFrom()[0].toString(), contentString, result);
 
-                System.out.println("---------------------------------");
-                System.out.println("Email Number " + (i + 1));
-                System.out.println("Subject: " + message.getSubject());
-                System.out.println("From: " + message.getFrom()[0]);
-                System.out.println("content: " + contentString);
-                System.out.println("Is Spam: " + isSpam);
+                //debug print
+                // System.out.println("---------------------------------");
+                // System.out.println("Email Number " + (i + 1));
+                // System.out.println("Subject: " + message.getSubject());
+                // System.out.println("From: " + message.getFrom()[0]);
+                // System.out.println("content: " + contentString);
+                // System.out.println("Is Spam: " + isSpam);
             }
 
             emailFolder.close(false);

@@ -114,9 +114,9 @@ public class DatabaseManager {
         return emails;
     }
 
-    // Main method to create table and insert example data
-    public static void main(String[] args) {
-        createTables(); // Create the database table
-        // Insert example data
-    }
+    // // Main method to create table and insert example data
+    // public static void main(String[] args) {
+    //     createTables(); // Create the database table
+    //     // Insert example data
+    // }
 }
