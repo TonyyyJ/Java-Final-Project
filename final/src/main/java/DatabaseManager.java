@@ -6,7 +6,7 @@ import java.sql.Statement;
 
 public class DatabaseManager {
     // Please modify this path to your local path where the EmailChecker.db from our zip submission is 
-    private static final String URL = "jdbc:sqlite:C:/Users/DYY/Desktop/0510/Java-Final-Project/final/DB/EmailChecker.db";
+    private static final String URL = "jdbc:sqlite:C:\\Users\\tonyy\\Desktop\\Java-Final-Project\\final\\DB\\EmailChecker.db";
 
 
     // Connect to the SQLite database
