@@ -56,5 +56,7 @@ We use our test email account.
 Find the SpamCheckerGUI.java in the scr/main/java folder.
 
 Right click on this file, and select Run As > Java Application.
+![image](https://github.com/TonyyyJ/Java-Final-Project/assets/112592243/a29033aa-8abe-40fd-a312-d3a1d38acac3)
+
 
 It will take 10 to 30 to run the application, 
