@@ -17,7 +17,7 @@ public class DatabaseManager {
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(URL);
-            System.out.println("Connection to SQLite has been established.");
+            //System.out.println("Connection to SQLite has been established.");(debug)
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -72,7 +72,7 @@ public class DatabaseManager {
             pstmt.setString(3, content);
             pstmt.setString(4, isSpam);
             pstmt.executeUpdate();
-            System.out.println("Email inserted successfully.");
+            //System.out.println("Email inserted successfully."); (debug)
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
