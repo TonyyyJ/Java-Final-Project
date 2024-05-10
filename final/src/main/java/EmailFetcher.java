@@ -14,14 +14,14 @@ public class EmailFetcher {
     private String storeType;
     private String username;
     private String password;
-    private EmailClassifier classifier;
+    private EmailClassifier model;
 
     public EmailFetcher(String host, String storeType, String username, String password)throws Exception { 
         this.host = host;
         this.storeType = storeType;
         this.username = username;
         this.password = password;
-        this.classifier = new EmailClassifier();
+        this.model = new EmailClassifier();
     }
     
     private String getTextFromMessage(Message message) throws MessagingException, IOException {
@@ -74,7 +74,7 @@ public class EmailFetcher {
             for (int i = 0, n = messages.length; i < n; i++) {
                 Message message = messages[i];
                 String contentString = getTextFromMessage(message);
-                String isSpam = classifier.predict(contentString);
+                boolean isSpam = model.isSpam(contentString);
                 System.out.println("---------------------------------");
                 System.out.println("Email Number " + (i + 1));
                 System.out.println("Subject: " + message.getSubject());

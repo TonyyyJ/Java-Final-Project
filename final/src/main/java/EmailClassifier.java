@@ -1,48 +1,43 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
-import weka.classifiers.Evaluation;
-import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.bayes.NaiveBayesMultinomial;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
-import weka.core.converters.ConverterUtils.DataSource;
 import weka.core.tokenizers.NGramTokenizer;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
-import java.util.logging.Logger;
 import weka.core.Attribute;
 
 public class EmailClassifier {
-    private FilteredClassifier classifier;
+    private FilteredClassifier model;
     private Instances structure;
     private StringToWordVector filter;
-    private static Logger LOGGER = Logger.getLogger("EmailClassifier");
-    private ArrayList < Attribute > wekaAttributes;
+    private ArrayList < Attribute > dataAttribute;
     private Instances data;
+    //private NaiveBayes model;
 
     
     public EmailClassifier() throws Exception {
         // Declare text attribute to hold the message
-        Attribute attributeText = new Attribute("text", (List < String > ) null);
+        Attribute text = new Attribute("text", (List < String > ) null);
 
         // Declare the label attribute along with its values
-        ArrayList < String > classAttributeValues = new ArrayList < > ();
-        classAttributeValues.add("spam");
-        classAttributeValues.add("ham");
-        Attribute classAttribute = new Attribute("label", classAttributeValues);
+        ArrayList < String > spamClass = new ArrayList < > ();
+        spamClass.add("spam");
+        spamClass.add("ham");
+        Attribute labelAttribute = new Attribute("label", spamClass);
         
-        wekaAttributes = new ArrayList < > ();
-        wekaAttributes.add(classAttribute);
-        wekaAttributes.add(attributeText);
+        dataAttribute = new ArrayList < > ();
+        dataAttribute.add(labelAttribute);
+        dataAttribute.add(text);
         
         
         
@@ -62,74 +57,65 @@ public class EmailClassifier {
 
         //convert tokens to lowercase
         filter.setLowerCaseTokens(true);
-        
+     
+        model = new FilteredClassifier();
 
+        // // set Multinomial NaiveBayes as arbitrary model
+        model.setClassifier(new NaiveBayesMultinomial());
+        model.setFilter(filter);
+        model.buildClassifier(data);
         
-       
-        classifier = new FilteredClassifier();
-
-        // set Multinomial NaiveBayes as arbitrary classifier
-        classifier.setClassifier(new NaiveBayesMultinomial());
-        classifier.setFilter(filter);
-        classifier.buildClassifier(data);
-        
+        structure = new Instances("EmailData", dataAttribute, 0);
+        structure.setClassIndex(0); 
         
    
     }
 
-    public Instances loadRawDataset(String filename) {
+    
+    public Instances loadRawDataset(String filename) throws Exception{
         /* 
          *  Create an empty training set
          *  name the relation “Rel”.
          *  set intial capacity of 10*
          */
 
-        Instances dataset = new Instances("spam", wekaAttributes, 10);
+        Instances dataset = new Instances("spam", dataAttribute, 10);
 
         // Set class index
         dataset.setClassIndex(0);
 
         // read text file, parse data and add to instance
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            for (String line;
-                (line = br.readLine()) != null;) {
-                // split at first occurance of n no. of words
-                String[] parts = line.split("\\s+", 2);
+        BufferedReader br = new BufferedReader(new FileReader(filename)); 
+        for (String line;
+            (line = br.readLine()) != null;) {
+            // split at first occurance of n no. of words
+            String[] parts = line.split("\\s+", 2);
 
-                // basic validation
-                if (!parts[0].isEmpty() && !parts[1].isEmpty()) {
+            // basic validation
+            if (!parts[0].isEmpty() && !parts[1].isEmpty()) {
 
-                    DenseInstance row = new DenseInstance(2);
-                    row.setValue(wekaAttributes.get(0), parts[0]);
-                    row.setValue(wekaAttributes.get(1), parts[1]);
+                DenseInstance row = new DenseInstance(2);
+                row.setValue(dataAttribute.get(0), parts[0]);
+                row.setValue(dataAttribute.get(1), parts[1]);
 
-                    // add row to instances
-                    dataset.add(row);
-                }
-
+                // add row to instances
+                dataset.add(row);
             }
 
-        } 
-        catch (IOException e) {
-            LOGGER.warning(e.getMessage());
-        } 
-        catch (ArrayIndexOutOfBoundsException e) {
-            LOGGER.info("invalid row.");
         }
+        br.close();
         return dataset;
 
     }
 
-    public void saveArff(Instances dataset, String filename) {
-        try {
-            // initialize 
-            ArffSaver arffSaverInstance = new ArffSaver();
-            arffSaverInstance.setInstances(dataset);
-            arffSaverInstance.setFile(new File(filename));
-            arffSaverInstance.writeBatch();
-        } catch (IOException e) {
-            LOGGER.warning(e.getMessage());
-        }
+
+    public void saveArff(Instances dataset, String filename) throws Exception  {
+        // initialize 
+        ArffSaver arffSaverInstance = new ArffSaver();
+        arffSaverInstance.setInstances(dataset);
+        arffSaverInstance.setFile(new File(filename));
+        arffSaverInstance.writeBatch();
+       
     }
 
     
@@ -139,38 +125,23 @@ public class EmailClassifier {
         instance.setDataset(structure);
         instance.setValue(structure.attribute("text"), emailContent);
 
-        Instances singleInstance = new Instances(structure, 0);
-        singleInstance.add(instance);
-
-        Instances filteredInstance = Filter.useFilter(singleInstance, this.filter);
-
-        double result = classifier.classifyInstance(filteredInstance.firstInstance());
-
-        return result == 1.0;
+        double result = model.classifyInstance(instance);
+        // spam if result == 0
+        return result == 0.0;
     }
 
-    public String predict(String text) {
+
+    public static void main(String[] args) {
         try {
-            // create new Instance for prediction.
-            DenseInstance newinstance = new DenseInstance(2);
-
-            //weka demand a dataset to be set to new Instance
-            Instances newDataset = new Instances("predictiondata", wekaAttributes, 1);
-            newDataset.setClassIndex(0);
-
-            newinstance.setDataset(newDataset);
-
-            // text attribute value set to value to be predicted
-            newinstance.setValue(wekaAttributes.get(1), text);
-
-            // predict most likely class for the instance
-            double pred = classifier.classifyInstance(newinstance);
-
-            // return original label
-            return newDataset.classAttribute().value((int) pred);
+            EmailClassifier model = new EmailClassifier();
+            
+            String email1 = "Dear Sir/Madam, You have won a prize! Click here to claim it.";
+            String email2 = "Hey John, how are you? Let's catch up soon. Best, Alice";
+            
+            System.out.println("Email 1 is " + (model.isSpam(email1) ));
+            System.out.println("Email 2 is " + (model.isSpam(email2) ));
         } catch (Exception e) {
-            LOGGER.warning(e.getMessage());
-            return null;
+            e.printStackTrace();
         }
     }
     
